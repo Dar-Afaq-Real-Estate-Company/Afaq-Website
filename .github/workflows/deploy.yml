@@ -1,16 +1,12 @@
 name: Deploy Website
-
 on:
   push:
     branches: [main]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Deploy to Hostinger
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -36,4 +32,3 @@ jobs:
             /opt/alt/php82/usr/bin/php artisan view:clear || true
             /opt/alt/php82/usr/bin/php artisan config:cache || true
             /opt/alt/php82/usr/bin/php artisan storage:link || true
-            echo "Deployed to afaq-website.afaq.group"
