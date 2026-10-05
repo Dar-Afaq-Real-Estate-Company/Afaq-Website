@@ -19,8 +19,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            if [! -d.git ]; then
-              git clone https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git.
+            if [! -d .git ]; then
+              git clone https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git .
             else
               git fetch origin main
               git reset --hard origin/main
