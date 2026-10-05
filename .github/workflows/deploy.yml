@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
 
-concurrency:
-  group: deploy-website
-  cancel-in-progress: false
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,31 +11,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Upload website
-        uses: appleboy/scp-action@v0.1.7
+      - name: Deploy to Hostinger
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: ".,!.git,!.github,!storage,!node_modules,!tests,!bootstrap/cache,!public/storage,!.env"
-          target: ${{ secrets.DEPLOY_PATH }}
-          rm: false
-          overwrite: true
-          command_timeout: 15m
-
-      - name: Install dependencies and refresh Laravel
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          command_timeout: 20m
-          script_stop: true
           script: |
-            set -e
-            cd "${{ secrets.DEPLOY_PATH }}"
+            cd ${{ secrets.DEPLOY_PATH }}
+            rm -f default.php index.html
+            if [! -d.git ]; then
+              git clone https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git.
+            else
+              git fetch origin main
+              git reset --hard origin/main
+            fi
+            composer install --no-dev --optimize-autoloader --no-interaction || true
+            cp.env.example.env || true
+            php artisan key:generate --force || true
+            php artisan migrate --force || true
+            php artisan config:cache || true
+            php artisan route:cache || true
+            php artisan view:cache || true
+            php artisan storage:link || true
+            echo "Deployed to afaq-website.afaq.group successfully!"
             /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
             /opt/alt/php83/usr/bin/php artisan route:clear
             /opt/alt/php83/usr/bin/php artisan view:clear
