@@ -1,15 +1,12 @@
 name: Deploy Website
-
 on:
   push:
     branches: [main]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -19,11 +16,17 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            if [ ! -d .git ]; then
-              git clone https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git .
+            if [! -d.git ]; then
+              rm -rf.git
+              git init
+              git remote add origin https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git || true
+              git fetch origin main
+              git reset --hard origin/main
             else
               git fetch origin main
               git reset --hard origin/main
             fi
-            # لو موقعك ما فيه composer احذف السطرين اللي تحت
             /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction || true
+            /opt/alt/php82/usr/bin/php artisan migrate --force || true
+            /opt/alt/php82/usr/bin/php artisan optimize:clear || true
+            echo "Done!"
