@@ -27,17 +27,13 @@ jobs:
               git fetch origin main
               git reset --hard origin/main
             fi
-            composer install --no-dev --optimize-autoloader --no-interaction || true
+            /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction || true
             cp.env.example.env || true
-            php artisan key:generate --force || true
-            php artisan migrate --force || true
-            php artisan config:cache || true
-            php artisan route:cache || true
-            php artisan view:cache || true
-            php artisan storage:link || true
-            echo "Deployed to afaq-website.afaq.group successfully!"
-            /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-            /opt/alt/php83/usr/bin/php artisan route:clear
-            /opt/alt/php83/usr/bin/php artisan view:clear
-            /opt/alt/php83/usr/bin/php artisan config:clear
-            /opt/alt/php83/usr/bin/php artisan config:cache
+            /opt/alt/php82/usr/bin/php artisan key:generate --force || true
+            /opt/alt/php82/usr/bin/php artisan migrate --force || true
+            /opt/alt/php82/usr/bin/php artisan config:clear || true
+            /opt/alt/php82/usr/bin/php artisan route:clear || true
+            /opt/alt/php82/usr/bin/php artisan view:clear || true
+            /opt/alt/php82/usr/bin/php artisan config:cache || true
+            /opt/alt/php82/usr/bin/php artisan storage:link || true
+            echo "Deployed to afaq-website.afaq.group"
