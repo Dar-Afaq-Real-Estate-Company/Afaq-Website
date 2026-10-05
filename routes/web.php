@@ -28,7 +28,14 @@ Route::group(
 
 
 Route::get('/Aboutus', [App\Http\Controllers\detailsController::class, 'Aboutus'])->name('Aboutus');
-Route::get('/', [App\Http\Controllers\HomeController::class, 'welcome'])->name('welcome');
+Route::get('/', [App\Http\Controllers\SiteController::class, 'home'])->name('welcome');
+Route::get('/properties-list', [App\Http\Controllers\SiteController::class, 'properties'])->name('site.properties');
+Route::get('/section/{kind}', [App\Http\Controllers\SiteController::class, 'directory'])
+    ->whereIn('kind', ['contracting', 'jobs', 'companies', 'engineering', 'hotels'])->name('site.section');
+Route::get('/section/{kind}/{id}', [App\Http\Controllers\SiteController::class, 'directoryShow'])
+    ->whereIn('kind', ['contracting', 'jobs', 'companies', 'engineering', 'hotels'])->whereNumber('id')->name('site.section.show');
+Route::get('/services', [App\Http\Controllers\SiteController::class, 'services'])->name('site.services');
+Route::get('/plans', [App\Http\Controllers\SiteController::class, 'plans'])->name('site.plans');
 Route::get('/policy', [App\Http\Controllers\NotificationsController::class, 'policy'])->name('policy');
 
 Route::get('/show/{section?}/{type?}/{region?}', [App\Http\Controllers\advertisementController::class, 'show'])
