@@ -1,0 +1,47 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-website
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload website
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: ".,!.git,!.github,!storage,!node_modules,!tests,!bootstrap/cache,!public/storage,!.env"
+          target: ${{ secrets.DEPLOY_PATH }}
+          rm: false
+          overwrite: true
+          command_timeout: 15m
+
+      - name: Install dependencies and refresh Laravel
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          command_timeout: 20m
+          script_stop: true
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+            /opt/alt/php83/usr/bin/php artisan route:clear
+            /opt/alt/php83/usr/bin/php artisan view:clear
+            /opt/alt/php83/usr/bin/php artisan config:clear
+            /opt/alt/php83/usr/bin/php artisan config:cache
