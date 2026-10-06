@@ -30,6 +30,7 @@ Route::group(
 Route::get('/Aboutus', [App\Http\Controllers\detailsController::class, 'Aboutus'])->name('Aboutus');
 Route::get('/', [App\Http\Controllers\SiteController::class, 'home'])->name('welcome');
 Route::get('/properties-list', [App\Http\Controllers\SiteController::class, 'properties'])->name('site.properties');
+Route::get('/property/{id}', [App\Http\Controllers\SiteController::class, 'property'])->whereNumber('id')->name('site.property');
 Route::get('/section/{kind}', [App\Http\Controllers\SiteController::class, 'directory'])
     ->whereIn('kind', ['contracting', 'jobs', 'companies', 'engineering', 'hotels'])->name('site.section');
 Route::get('/section/{kind}/{id}', [App\Http\Controllers\SiteController::class, 'directoryShow'])

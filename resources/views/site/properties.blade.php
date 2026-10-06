@@ -116,7 +116,7 @@
                     if ($isRent && !empty($ad->weekly_price)) $extras[] = ($isAr ? 'أسبوعي ' : 'Weekly ') . number_format((float) $ad->weekly_price) . ' ' . $kwd;
                     if ($isRent && !empty($ad->daily_price)) $extras[] = ($isAr ? 'يومي ' : 'Daily ') . number_format((float) $ad->daily_price) . ' ' . $kwd;
                 @endphp
-                <a href="{{ route('details.show', $ad->id) }}" class="af-card" style="display:grid;grid-template-columns:260px minmax(0,1fr);margin-bottom:14px;color:inherit;{{ !empty($ad->is_featured) ? 'border:2px solid #cba135' : '' }}">
+                <a href="{{ route('site.property', $ad->id) }}" class="af-card" style="display:grid;grid-template-columns:260px minmax(0,1fr);margin-bottom:14px;color:inherit;{{ !empty($ad->is_featured) ? 'border:2px solid #cba135' : '' }}">
                     <div style="background:#dfe7e9 url('{{ $ad->images ?: asset('image/afaq.jpeg') }}') center/cover;min-height:190px;position:relative">
                         @if (!empty($ad->is_featured))<span style="position:absolute;top:12px;{{ $isAr ? 'right' : 'left' }}:12px;background:#cba135;color:#0b3442;padding:4px 10px;border-radius:8px;font-weight:900;font-size:12px">VIP</span>@endif
                         <span style="position:absolute;bottom:10px;{{ $isAr ? 'left' : 'right' }}:12px;background:rgba(11,52,66,.75);color:#fff;padding:3px 9px;border-radius:7px;font-size:11.5px">👁 {{ $ad->views_count ?? 0 }}</span>
