@@ -24,5 +24,7 @@ jobs:
             git fetch "$REPO" main
             git reset --hard FETCH_HEAD
             /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
-            /opt/alt/php82/usr/bin/php artisan optimize:clear
+                mkdir -p storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache
+            chmod -R 775 storage bootstrap/cache
+/opt/alt/php82/usr/bin/php artisan optimize:clear
             echo "Deployed: $(git rev-parse --short HEAD)"
