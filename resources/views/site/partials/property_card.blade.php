@@ -7,7 +7,7 @@
     $isRent = str_contains($tx, 'يجار');
     $kwd = $isAr ? 'د.ك' : 'KWD';
 @endphp
-<a href="{{ route('details.show', $ad->id) }}" class="af-card" style="display:block;color:inherit">
+<a href="{{ route('site.property', $ad->id) }}" class="af-card" style="display:block;color:inherit">
     <div style="height:170px;background:#dfe7e9 url('{{ $img }}') center/cover;position:relative">
         <div style="position:absolute;top:12px;{{ $isAr ? 'right' : 'left' }}:12px;display:flex;gap:6px">
             <span class="af-chip" style="background:#fff;color:#0f4051">{{ $txLabel }}</span>

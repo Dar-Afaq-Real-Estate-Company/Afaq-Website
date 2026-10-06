@@ -180,7 +180,7 @@
         <div class="af-head-row"><h2 class="af-h2">{{ $isAr ? 'المشاريع المميزة' : 'Featured projects' }}</h2></div>
         <div class="af-grid-3">
             @foreach ($featured as $p)
-                <a href="{{ route('details.show', $p->id) }}" style="border-radius:22px;overflow:hidden;position:relative;height:240px;display:block;background:#dfe7e9 url('{{ $p->images ?: asset('image/afaq.jpeg') }}') center/cover">
+                <a href="{{ route('site.property', $p->id) }}" style="border-radius:22px;overflow:hidden;position:relative;height:240px;display:block;background:#dfe7e9 url('{{ $p->images ?: asset('image/afaq.jpeg') }}') center/cover">
                     <span style="position:absolute;top:14px;{{ $isAr ? 'right' : 'left' }}:14px;background:#cba135;color:#0b3442;padding:5px 12px;border-radius:9px;font-weight:900;font-size:12.5px">VIP</span>
                     <div style="position:absolute;inset:auto 0 0 0;padding:18px;background:linear-gradient(transparent,rgba(11,52,66,.92));color:#fff">
                         <div style="font-weight:900;font-size:18px">{{ $p->title ?: $p->type }}</div>

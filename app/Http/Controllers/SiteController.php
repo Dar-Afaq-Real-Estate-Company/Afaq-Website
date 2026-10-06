@@ -231,4 +231,17 @@ class SiteController extends Controller
         $plans = $this->safeTable('subscription_plans', fn ($t) => $t->where('is_active', 1)->where('audience', $audience)->where('billing_cycle', $cycle)->orderBy('sort_order')->get(), collect());
         return view('site.plans', compact('plans', 'audience', 'cycle'));
     }
+
+    /// صفحة تفاصيل العقار بنفس منطق التطبيق (الناشر، المميزات، الخريطة، العمولة، أسعار الإيجار)
+    public function property(int $id)
+    {
+        $ad = $this->liveAds()->where('id', $id)->first() ?? abort(404);
+        DB::table('advertisements')->where('id', $id)->increment('views_count');
+        $publisher = DB::table('users')->where('id', $ad->user_id)->first();
+        $amenities = rescue(fn () => DB::table('advertisement_amenity')
+            ->join('amenities', 'amenities.id', '=', 'advertisement_amenity.amenity_id')
+            ->where('advertisement_amenity.advertisement_id', $id)->pluck('amenities.name'), collect(), false);
+        $similar = $this->liveAds()->where('id', '!=', $id)->where('type', $ad->type)->where('transaction_type', $ad->transaction_type)->orderByDesc('id')->take(4)->get();
+        return view('site.property', compact('ad', 'publisher', 'amenities', 'similar'));
+    }
 }
