@@ -1,4 +1,4 @@
-name: Deploy Website
+name: Deploy Website to Main Domain
 on:
   push:
     branches: [main]
@@ -6,47 +6,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Hostinger via SSH
+      - uses: actions/checkout@v4
+      - name: Deploy to afaq.group
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script_stop: true
+          port: ${{ secrets.SSH_PORT }}
           script: |
-            set -e
-            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
-            REPO="https://${{ secrets.GITHUB_TOKEN }}@github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git"
-
-            if [! -d "$DEPLOY_PATH/.git" ]; then
-              mkdir -p "$DEPLOY_PATH"
-              git clone "$REPO" "$DEPLOY_PATH"
+            cd ${{ secrets.DEPLOY_PATH }}
+            if [! -d.git ]; then
+              git init
+              git remote add origin https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git || true
+              git fetch origin main
+              git reset --hard origin/main
+            else
+              git fetch origin main
+              git reset --hard origin/main
             fi
-
-            cd "$DEPLOY_PATH"
-            git remote set-url origin "$REPO"
-            git fetch origin main
-            git reset --hard origin/main
-
-            # keep env file if exists
-            if [ -f.env.example ] && [! -f.env ]; then cp.env.example.env; fi
-
-            mkdir -p storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache
-            chmod -R 775 storage bootstrap/cache
-
-            # frontend build
-            if [ -f package.json ]; then
-              npm ci
-              npm run build
-            fi
-
-            # backend install
-            /opt/alt/php83/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
-
-            php artisan storage:link || true
-            php artisan optimize:clear
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-
-            echo "Deployed: $(git rev-parse --short HEAD)"
+            /opt/alt/php82/usr/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction || true
+            /opt/alt/php82/usr/bin/php artisan migrate --force || true
+            /opt/alt/php82/usr/bin/php artisan optimize:clear || true
+            /opt/alt/php82/usr/bin/php artisan config:cache || true
