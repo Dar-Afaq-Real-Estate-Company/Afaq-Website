@@ -16,7 +16,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            if [! -d.git ]; then
+            if [ ! -d .git ]; then
               git init
               git remote add origin https://github.com/Dar-Afaq-Real-Estate-Company/Afaq-Website.git || true
               git fetch origin main
