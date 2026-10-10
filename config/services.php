@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // === روابط الـ API والصور بعد فصل الدومين (afaq.group للموقع، api.afaq.group للـ API)
+    'afaq_api' => [
+        'base_url' => env('API_BASE_URL', 'https://api.afaq.group/api'),
+        'asset_url' => env('ASSET_BASE_URL', 'https://api.afaq.group'),
+    ],
+
 ];

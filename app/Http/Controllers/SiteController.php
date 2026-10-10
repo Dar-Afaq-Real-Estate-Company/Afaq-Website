@@ -112,7 +112,7 @@ class SiteController extends Controller
     public function directory(Request $r, string $kind)
     {
         $isAr = app()->getLocale() === 'ar';
-        $img = fn ($p) => $p ? (str_starts_with($p, 'http') ? $p : 'https://api.afaq.group/storage/' . ltrim($p, '/')) : null;
+        $img = fn ($p) => $p ? (str_starts_with($p, 'http') ? $p : rtrim(config('services.afaq_api.asset_url', 'https://api.afaq.group'), '/') . '/storage/' . ltrim($p, '/')) : null;
         $items = collect();
         $categories = collect();
         $catLabel = null;
@@ -170,7 +170,7 @@ class SiteController extends Controller
     public function directoryShow(string $kind, int $id)
     {
         $isAr = app()->getLocale() === 'ar';
-        $img = fn ($p) => $p ? (str_starts_with($p, 'http') ? $p : 'https://api.afaq.group/storage/' . ltrim($p, '/')) : null;
+        $img = fn ($p) => $p ? (str_starts_with($p, 'http') ? $p : rtrim(config('services.afaq_api.asset_url', 'https://api.afaq.group'), '/') . '/storage/' . ltrim($p, '/')) : null;
         $kwd = $isAr ? ' د.ك' : ' KWD';
         $fields = [];
         $gallery = [];
