@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -36,5 +37,29 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
+    }
+
+    // === الدخول بالبريد (الافتراضي) أو برقم الهاتف من نفس الصفحة
+    public function username()
+    {
+        return request()->filled('phone') ? 'phone' : 'email';
+    }
+
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+        ]);
+    }
+
+    protected function credentials(Request $request)
+    {
+        $field = $this->username();
+        $value = $request->input($field);
+        if ($field === 'phone') {
+            $value = preg_replace('/\D/', '', $value);
+        }
+        return [$field => $value, 'password' => $request->input('password')];
     }
 }
