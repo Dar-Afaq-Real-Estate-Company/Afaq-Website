@@ -166,6 +166,30 @@ body {
                     <form method="POST" action="{{ route('login') }}" class="text-start">
                         @csrf
 
+                        @php $byPhone = request('mode') === 'phone' || old('phone'); $isAr = app()->getLocale() === 'ar'; @endphp
+                        @if ($byPhone)
+                        <div class="form-group-custom">
+                            <label class="custom-label">{{ $isAr ? 'رقم الهاتف' : 'Phone number' }}</label>
+                            <div style="display:flex; gap:8px; direction:ltr;">
+                                <select id="phoneCode" class="custom-input" style="width:110px; flex-shrink:0;">
+                                    <option value="965" selected>🇰🇼 +965</option>
+                                    <option value="966">🇸🇦 +966</option>
+                                    <option value="971">🇦🇪 +971</option>
+                                    <option value="973">🇧🇭 +973</option>
+                                    <option value="974">🇶🇦 +974</option>
+                                    <option value="968">🇴🇲 +968</option>
+                                </select>
+                                <input id="phoneLocal" type="tel" inputmode="numeric" class="custom-input @error('phone') is-invalid @enderror"
+                                       value="{{ old('phone') ? preg_replace('/^(965|966|971|973|974|968)/', '', old('phone')) : '' }}" required autofocus placeholder="xxxxxxxx" style="flex:1;">
+                            </div>
+                            <input type="hidden" name="phone" id="phoneFull" value="{{ old('phone') }}">
+                            @error('phone')
+                                <span class="invalid-feedback" role="alert" style="display:block; font-size:0.8rem; font-weight:bold; margin-top:5px;">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        @else
                         <div class="form-group-custom">
                             <label class="custom-label">{{ trans('auth.Email') }}</label>
                             <input id="email" type="email" class="custom-input @error('email') is-invalid @enderror" 
@@ -176,6 +200,7 @@ body {
                                 </span>
                             @enderror
                         </div>
+                        @endif
 
                         <div class="form-group-custom">
                             <label class="custom-label">{{ trans('auth.password') }}</label>
@@ -196,6 +221,27 @@ body {
                         <button type="submit" class="login-btn-fakhim">
                             {{ trans('auth.Login') }}
                         </button>
+
+                        <div style="text-align:center; margin-top:14px;">
+                            <a href="{{ $byPhone ? route('login') : route('login', ['mode' => 'phone']) }}" style="font-weight:700; font-size:0.9rem;">
+                                @if ($byPhone)
+                                    <i class="fa-regular fa-envelope"></i> {{ $isAr ? 'تسجيل الدخول بالبريد الإلكتروني' : 'Log in with email' }}
+                                @else
+                                    <i class="fa-solid fa-mobile-screen"></i> {{ $isAr ? 'تسجيل الدخول برقم الهاتف' : 'Log in with phone number' }}
+                                @endif
+                            </a>
+                        </div>
+                        @if ($byPhone)
+                        <script>
+                            (function () {
+                                var form = document.getElementById('phoneLocal').form;
+                                form.addEventListener('submit', function () {
+                                    var local = document.getElementById('phoneLocal').value.replace(/\D/g, '').replace(/^0+/, '');
+                                    document.getElementById('phoneFull').value = document.getElementById('phoneCode').value + local;
+                                });
+                            })();
+                        </script>
+                        @endif
 
                         <div class="footer-links d-flex justify-content-between mt-4">
                             @if (Route::has('password.request'))
